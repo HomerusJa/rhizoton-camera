@@ -1,0 +1,16 @@
+{
+  "name": "ShellyPlugS",
+  "version": "0.1.0",
+  "description": "Library that enables communication with the Shelly Plug S",
+  "keywords": "networking, ShellyPlugS",
+  "authors": [
+    {
+      "name": "Jakob Schluse",
+      "email": "jakob@schluse.com"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {},
+  "frameworks": "*",
+  "platforms": "*"
+}

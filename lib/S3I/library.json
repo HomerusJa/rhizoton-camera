@@ -1,0 +1,19 @@
+{
+  "name": "S3I",
+  "version": "0.1.0",
+  "description": "Library that enables communication with the S3I API provided by the KWH 4.0",
+  "keywords": "networking, S3I, KWH 4.0",
+  "authors": [
+    {
+      "name": "Jakob Schluse",
+      "email": "jakob@schluse.com"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "ArduinoJson": "latest",
+    "CustomLogging": "symlink://C:/Users/jakob/OneDrive/dev/plant_growth_observation/src/EmbeddedGlobalLibs/CustomLogging"
+  },
+  "frameworks": "*",
+  "platforms": "*"
+}

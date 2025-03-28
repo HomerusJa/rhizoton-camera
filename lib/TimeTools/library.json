@@ -1,0 +1,16 @@
+{
+  "name": "TimeTools",
+  "version": "0.1.0",
+  "description": "Library which provides an easy wrapper around the time libraries of the ESP32",
+  "keywords": "time",
+  "authors": [
+    {
+      "name": "Jakob Schluse",
+      "email": "jakob@schluse.com"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {},
+  "frameworks": "*",
+  "platforms": "*"
+}
