@@ -14,25 +14,31 @@ void RhizotronCam::S3IUtils::SendStatusAsEvent(const char* StatusName,
     const char* EventName =
         g_Config.Get("s3i", "status_event_name").as<const char*>();
 
-    // clang-format off
-    String Body = String(
-             "{\"sender\": \"") + g_Config.Get("s3i", "id").as<const char*>()
-        + "\", \"identifier\": \""        + S3I::CreateMessageIdentifier()
-        + "\", \"timestamp\": "            + String(TimeTools::GetTimestamp())
-        +   ", \"topic\": \""                + EventName
-        + "\", \"messageType\": \"eventMessage\", "
-        +     "\"content\": {"
-        +         "\"type\": \"status\", "
-        +         "\"status\": \"" + StatusName + "\"}";
-    
+    const char* StatusDetailContent = "";
     if (StatusDetail == nullptr) {
-        StatusDetail = "";
-    }
-    if (StatusDetail[0] == '{') {
-        Body += (String(", \"detail\": ") + StatusDetail + "}").c_str();
+        // Send empty string if null
+        StatusDetailContent = "\"\"";
+    } else if (StatusDetail[0] == '{') {
+        // Send as JSON object if it starts with '{'
+        StatusDetailContent = StatusDetail;
     } else {
-        Body += (String(", \"detail\": \"") + StatusDetail + "\"}").c_str();
+        // Wrap in quotes if it is a string that is not a JSON object
+        StatusDetailContent = (String("\"") + StatusDetail + "\"").c_str();
     }
+
+    // clang-format off
+    String Body = String("{") +
+        "\"sender\": \""         + g_Config.Get("s3i", "id").as<const char*>() + "\", "
+        "\"identifier\": \""     + S3I::CreateMessageIdentifier() + "\", "
+        "\"timestamp\": "        + String(TimeTools::GetTimestamp()) + ", "
+        "\"topic\": \""          + EventName + "\", "
+        "\"messageType\": \"eventMessage\", "
+        "\"content\": {"
+            "\"type\": \"status\", "
+            "\"status\": \""     + StatusName + "\", "
+            "\"detail\": "       + String(StatusDetailContent) + 
+        "}"
+        "}";
     // clang-format on
 
     DEBUG_PRINTF("Message Content: <<<%s>>>\n", Body.c_str());
@@ -56,18 +62,20 @@ void RhizotronCam::S3IUtils::SendErrorAsEvent(const char* ErrorText,
         g_Config.Get("s3i", "status_event_name").as<const char*>();
 
     // clang-format off
-    String Body = String(
-             "{\"sender\": \"")       + g_Config.Get("s3i", "id").as<const char*>()
-        + "\", \"identifier\": \""    + S3I::CreateMessageIdentifier()
-        + "\", \"timestamp\": "       + String(TimeTools::GetTimestamp())
-        +   ", \"topic\": \""         + EventName
-        + "\", \"messageType\": "     + "\"eventMessage\", "
-        +     "\"content\": {"
-        +         "\"type\": \"status\", "
-        +         "\"status\": \"error\", "
-        +         "\"source\": \"" + ErrorSource + "\", "
-        +         "\"detail\": \"" + ErrorDetail + "\", "
-        +         "\"error_text\": \"" + ErrorText + "\"}}";
+    String Body = String("{") +
+        "\"sender\": \""         + g_Config.Get("s3i", "id").as<const char*>() + "\", "
+        "\"identifier\": \""     + S3I::CreateMessageIdentifier() + "\", "
+        "\"timestamp\": "        + String(TimeTools::GetTimestamp()) + ", "
+        "\"topic\": \""          + EventName + "\", "
+        "\"messageType\": \"eventMessage\", "
+        "\"content\": {"
+            "\"type\": \"status\", "
+            "\"status\": \"error\", "
+            "\"source\": \""     + ErrorSource + "\", "
+            "\"detail\": \""     + ErrorDetail + "\", "
+            "\"error_text\": \"" + ErrorText + "\""
+        "}"
+        "}";
     // clang-format on
 
     DEBUG_PRINTF("Message Content: <<<%s>>>\n", Body.c_str());
@@ -89,14 +97,17 @@ void RhizotronCam::S3IUtils::SendImageAsEvent(const char* ImagePath) {
         g_Config.Get("s3i", "image_event_name").as<const char*>();
 
     // clang-format off
-    String Part1 = 
-        String("{\"sender\": \"") + g_Config.Get("s3i", "id").as<const char*>()
-         + "\", \"identifier\": \"" + S3I::CreateMessageIdentifier()
-         + "\", \"timestamp\": " + String(TimeTools::GetTimestamp())
-         +   ", \"topic\": \"" + EventName
-         + "\", \"messageType\": \"eventMessage\", \"content\": {\"type\": \"b64 jpeg\", \"path\": \"" + String(ImagePath)
-         + "\", \"takenAt\": " + String(Camera::ExtractTimestampFromImage(ImagePath))
-           + ", \"image\": \"";
+    String Part1 = String("{") +
+        "\"sender\": \""         + g_Config.Get("s3i", "id").as<const char*>() + "\", "
+        "\"identifier\": \""     + S3I::CreateMessageIdentifier() + "\", "
+        "\"timestamp\": "        + String(TimeTools::GetTimestamp()) + ", "
+        "\"topic\": \""          + EventName + "\", "
+        "\"messageType\": \"eventMessage\", "
+        "\"content\": {"
+            "\"type\": \"b64 jpeg\", "
+            "\"path\": \""       + String(ImagePath) + "\", "
+            "\"takenAt\": "      + String(Camera::ExtractTimestampFromImage(ImagePath)) + ", "
+            "\"image\": \"";
     // clang-format on
 
     const char* Part1Char = Part1.c_str();
