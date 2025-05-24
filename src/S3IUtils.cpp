@@ -104,7 +104,7 @@ void RhizotronCam::S3IUtils::SendImageAsEvent(const char* ImagePath) {
         "\"topic\": \""          + EventName + "\", "
         "\"messageType\": \"eventMessage\", "
         "\"content\": {"
-            "\"type\": \"b64 jpeg\", "
+            "\"type\": \"image/jpeg; encoding=base64url\", "
             "\"path\": \""       + String(ImagePath) + "\", "
             "\"takenAt\": "      + String(Camera::ExtractTimestampFromImage(ImagePath)) + ", "
             "\"image\": \"";
@@ -248,8 +248,8 @@ void RhizotronCam::S3IUtils::FetchAndProcessMessages() {
             + "\", \"identifier\": \"" + S3I::CreateMessageIdentifier()
             + "\", \"receivers\": [\"" + doc["replyToEndpoint"].as<const char*>()
             + "\"], \"messageType\": \"getValueReply\", \"replyingToMessage\": \"" + doc["identifier"].as<const char*>()
-            + "\", \"value\": {\"type\": \"b64 jpeg\", \"path\": \"" + String(ImagePath)
-            + "\", \"taken_at\": " + String(Camera::ExtractTimestampFromImage(ImagePath.c_str()))
+            + "\", \"value\": {\"type\": \"image/jpeg; encoding=base64url\", \"path\": \"" + String(ImagePath)
+            + "\", \"takenAt\": " + String(Camera::ExtractTimestampFromImage(ImagePath.c_str()))
             + ", \"image\": \"";
         // clang-format on
 
