@@ -130,6 +130,8 @@ bool RhizotronCam::Camera::Capture(const char* ImagePath, Flash* Flash) {
     // Analyze the image if needed
     // AnalyzeImage(fb);
 
+    esp_camera_fb_return(fb);
+
     return true;
 }
 
