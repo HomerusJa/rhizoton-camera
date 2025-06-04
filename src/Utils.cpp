@@ -95,6 +95,24 @@ void Restart(uint32_t delay_ms) {
     ESP.restart();
 }
 
+void morse_blink(uint8_t blink_pin, const char *morse_code) {
+    for (const char *p = morse_code; *p; p++) {
+        if (*p == '.') {
+            digitalWrite(blink_pin, HIGH);
+            delay(100);
+            digitalWrite(blink_pin, LOW);
+            delay(100);
+        } else if (*p == '-') {
+            digitalWrite(blink_pin, HIGH);
+            delay(300);
+            digitalWrite(blink_pin, LOW);
+            delay(100);
+        } else if (*p == ' ') {
+            delay(300);  // Space between letters
+        }
+    }
+}
+
 }  // namespace Utils
 
 }  // namespace RhizotronCam

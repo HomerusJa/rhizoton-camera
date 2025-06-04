@@ -25,6 +25,8 @@ void ReadSerialCommands(bool &IsRestartTime, bool &IsCaptureTime,
                         bool &IsFetchTime, Timers::Timers &g_Timers);
 
 void Restart(uint32_t delay_ms = 1000);
+
+void morse_blink(uint8_t blink_pin, const char *morse_code);
 }  // namespace Utils
 }  // namespace RhizotronCam
 

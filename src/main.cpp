@@ -23,27 +23,22 @@ RhizotronCam::Camera::Flash* g_Flash = new RhizotronCam::Camera::FlashOff();
 
 #define BLINK_PIN 4
 
-static void info_blink(int times) {
-    for (int i = 0; i < times; i++) {
-        digitalWrite(BLINK_PIN, HIGH);
-        delay(100);
-        digitalWrite(BLINK_PIN, LOW);
-        delay(100);
-    }
-}
 
 void setup() {
     pinMode(BLINK_PIN, OUTPUT);
-    info_blink(3);
+    RhizotronCam::Utils::morse_blink(BLINK_PIN, "...");
 
     Serial.begin(115200);
     CustomLogging::SerialLog::InitSerialLogger(true);
 
     RhizotronCam::Utils::InitSD();
 
+    RhizotronCam::Utils::morse_blink(BLINK_PIN, "---");
+
     g_Config.Load();
 
     if (!RhizotronCam::Utils::ConnectToWiFi()) RhizotronCam::Utils::Restart();
+    RhizotronCam::Utils::morse_blink(BLINK_PIN, ".");
     bool AllowUDP = g_Config.Get("logging", "allow_udp").as<bool>();
 
     TimeTools::InitTime();
@@ -51,6 +46,7 @@ void setup() {
     RhizotronCam::Camera::InitializeImageNameCounter();
     if (!RhizotronCam::Camera::Init()) {
         LOG_ERROR("Setup", "Failed to initialize camera");
+        RhizotronCam::Utils::morse_blink(BLINK_PIN, "... --- ...");
         RhizotronCam::Utils::Restart();
     }
 
@@ -89,7 +85,7 @@ void setup() {
 
     LOG_INFO("Setup", "Setup complete");
 
-    info_blink(1);
+    RhizotronCam::Utils::morse_blink(BLINK_PIN, "--- ---");
 
     // Send the status to the S3I broker
     RhizotronCam::S3IUtils::SendStatusAsEvent("startup");
