@@ -23,7 +23,6 @@ RhizotronCam::Camera::Flash* g_Flash = new RhizotronCam::Camera::FlashOff();
 
 #define BLINK_PIN 4
 
-
 void setup() {
     pinMode(BLINK_PIN, OUTPUT);
     RhizotronCam::Utils::morse_blink(BLINK_PIN, "...");
@@ -43,6 +42,7 @@ void setup() {
 
     TimeTools::InitTime();
 
+    SD_MMC.mkdir("/image");
     RhizotronCam::Camera::InitializeImageNameCounter();
     if (!RhizotronCam::Camera::Init()) {
         LOG_ERROR("Setup", "Failed to initialize camera");
