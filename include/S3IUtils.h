@@ -27,7 +27,7 @@ void SendStatusAsEvent(const char* StatusName,
                        const char* StatusDetail = nullptr);
 void SendImageAsEvent(const char* ImagePath);
 void SendImage(const char* Part1, const char* ImagePath, const char* Part2,
-               const char* Endpoint);
+               const char* Endpoint, bool DoRetry = false);
 void FetchAndProcessMessages();
 
 }  // namespace S3IUtils

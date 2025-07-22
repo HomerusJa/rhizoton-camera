@@ -4,8 +4,8 @@
 
 static bool IsErrorMessage(const String& Response) {
     if (Response.isEmpty()) return true;
-
     if (Response.indexOf("\"error\"") != -1) return true;
+    if (Response.indexOf("500 Internal Server Error") != -1) return true;
     return false;
 }
 
@@ -115,12 +115,12 @@ void RhizotronCam::S3IUtils::SendImageAsEvent(const char* ImagePath) {
 
     DEBUG_PRINTF("Message Content: %s <<<IMAGE>>> %s\n", Part1Char, Part2Char);
 
-    SendImage(Part1Char, ImagePath, Part2Char, EventName);
+    SendImage(Part1Char, ImagePath, Part2Char, EventName, true);
 }
 
 void RhizotronCam::S3IUtils::SendImage(const char* Part1, const char* ImagePath,
-                                       const char* Part2,
-                                       const char* Endpoint) {
+                                       const char* Part2, const char* Endpoint,
+                                       bool DoRetry) {
     LOG_INFO_1("S3IUtils", "Sending image at", ImagePath);
 
     LOG_DEBUG("S3IUtils", "Creating message writers");
@@ -142,6 +142,14 @@ void RhizotronCam::S3IUtils::SendImage(const char* Part1, const char* ImagePath,
         String Detail = String("{\"response\": \"") + Response +
                         "\", \"path\": \"" + ImagePath + "\"}";
         SendErrorAsEvent("Failed to send image", Detail.c_str(), "S3I");
+
+        if (DoRetry) {
+            LOG_INFO("S3IUtils", "Retrying to send image");
+            // Retry sending the image
+            SendImage(Part1, ImagePath, Part2, Endpoint, false);
+        } else {
+            LOG_ERROR("S3IUtils", "Image sending failed, not retrying");
+        }
         return;
     }
 
@@ -259,7 +267,8 @@ void RhizotronCam::S3IUtils::FetchAndProcessMessages() {
         SendImage(
             Part1Char, ImagePath.c_str(), Part2Char,
             (String("s3ibs://") + doc["replyToEndpoint"].as<const char*>())
-                .c_str());
+                .c_str(),
+            false);
         return;
     }
 
